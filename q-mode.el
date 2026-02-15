@@ -244,9 +244,19 @@ each level is indented by this amount."
 
 (defun q-activate-buffer (buffer)
   "Set the `q-active-buffer' to the supplied BUFFER."
-  (interactive "bactivate buffer: ")
+  (interactive
+   (list (get-buffer
+          (read-buffer "activate buffer: "
+                       nil
+                       t
+                       (lambda (buffer)
+                         (let ((buffer (get-buffer (car buffer))))
+                           (and (buffer-live-p buffer)
+                                (comint-check-proc buffer)
+                                (with-current-buffer buffer
+                                  (eq major-mode #'q-shell-mode)))))))))
   (when (called-interactively-p 'any) (display-buffer buffer))
-  (setq q-active-buffer buffer))
+  (setq q-active-buffer (get-buffer buffer)))
 
 (defun q-default-args ()
   "Build a list of default args out of the q-init customizable variables."
