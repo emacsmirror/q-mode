@@ -242,19 +242,24 @@ each level is indented by this amount."
   (interactive)
   (q-activate-buffer (current-buffer)))
 
+(defun q-shell-buffer-p (buffer)
+  "Return non-nil if BUFFER is a live Q shell buffer.
+BUFFER can be a buffer object, buffer name, or cons cell from completion."
+  (let ((buf (get-buffer (if (consp buffer) (car buffer) buffer))))
+    (and buf
+         (buffer-live-p buf)
+         (comint-check-proc buf)
+         (with-current-buffer buf
+           (eq major-mode 'q-shell-mode)))))
+
 (defun q-activate-buffer (buffer)
-  "Set the `q-active-buffer' to the supplied BUFFER."
+  "Set the `q-active-buffer' to the supplied BUFFER.
+Prompt with a list of live Q Shell buffers if called interactively."
   (interactive
-   (list (get-buffer
-          (read-buffer "activate buffer: "
-                       nil
-                       t
-                       (lambda (buffer)
-                         (let ((buffer (get-buffer (car buffer))))
-                           (and (buffer-live-p buffer)
-                                (comint-check-proc buffer)
-                                (with-current-buffer buffer
-                                  (eq major-mode #'q-shell-mode)))))))))
+   (list (read-buffer "activate buffer: "
+                      nil
+                      t
+                      #'q-shell-buffer-p)))
   (when (called-interactively-p 'any) (display-buffer buffer))
   (setq q-active-buffer (get-buffer buffer)))
 
@@ -310,7 +315,7 @@ command to read the command line arguments from the minibuffer."
          (process-environment (cons "KX_LINE=0" process-environment))
          process)
     (when (called-interactively-p 'any) (pop-to-buffer buffer))
-    (when (or current-prefix-arg (not (comint-check-proc buffer)))
+    (when (or current-prefix-arg (not (q-shell-buffer-p buffer)))
       (with-current-buffer buffer
         (message "Starting q with the following command: \"%s\"" cmd)
         (q-shell-mode)
@@ -338,7 +343,7 @@ to read the command line arguments from the minibuffer."
   (let* ((buffer (get-buffer-create (format "*%s*" (format "qcon-%s" args))))
          process)
     (when (called-interactively-p 'any) (pop-to-buffer buffer))
-    (when (or current-prefix-arg (not (comint-check-proc buffer)))
+    (when (or current-prefix-arg (not (q-shell-buffer-p buffer)))
       (with-current-buffer buffer
         (message "Starting qcon with the following cmd: \"%s\"" (concat q-qcon-program " " args))
         (q-shell-mode)
@@ -353,8 +358,7 @@ to read the command line arguments from the minibuffer."
 (defun q-show-q-buffer ()
   "Switch to the active q process, or start a new one (passing in args)."
   (interactive)
-  (unless (and (buffer-live-p q-active-buffer)
-               (comint-check-proc q-active-buffer))
+  (unless (q-shell-buffer-p q-active-buffer)
     (q))
   (if (called-interactively-p 'any)
       (pop-to-buffer q-active-buffer)
