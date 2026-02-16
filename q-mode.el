@@ -761,9 +761,9 @@ updates when a buffer is saved."
   "Major mode for interacting with a q interpreter."
   :syntax-table q-mode-syntax-table
   (add-hook (make-local-variable 'comint-output-filter-functions) 'comint-strip-ctrl-m)
-  (setq comint-prompt-regexp "^\\(q)+\\|[^:]*:[0-9]+>\\)")
-  (setq font-lock-defaults q-font-lock-defaults)
-  (set (make-local-variable 'comint-process-echoes) nil)
+  (setq-local comint-prompt-regexp "^\\(q)+\\|[^:]*:[0-9]+>\\)")
+  (setq-local font-lock-defaults q-font-lock-defaults)
+  (setq-local comint-process-echoes nil)
   )
 
 (defvar q-imenu-generic-expression
@@ -775,13 +775,13 @@ updates when a buffer is saved."
 (define-derived-mode q-mode prog-mode "Q-Script"
   "Major mode for editing q language files."
   :group 'q
-  (setq font-lock-defaults q-font-lock-defaults)
-  (set (make-local-variable 'comment-start) q-comment-start)
-  (set (make-local-variable 'comment-start-skip) "\\(^\\|[ \t]\\)\\(/+[ \t]*\\)")
-  (set (make-local-variable 'comment-end) "")
-  (set (make-local-variable 'indent-line-function) 'q-indent-line)
+  (setq-local font-lock-defaults q-font-lock-defaults)
+  (setq-local comment-start q-comment-start)
+  (setq-local comment-start-skip "\\(^\\|[ \t]\\)\\(/+[ \t]*\\)")
+  (setq-local comment-end "")
+  (setq-local indent-line-function 'q-indent-line)
   ;; enable imenu
-  (set (make-local-variable 'imenu-generic-expression) q-imenu-generic-expression)
+  (setq-local imenu-generic-expression q-imenu-generic-expression)
   (add-hook 'flymake-diagnostic-functions 'q-flymake nil t)
   )
 
