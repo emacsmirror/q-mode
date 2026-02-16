@@ -106,3 +106,8 @@ or at the end:
 / q-msg-postfix: ";system \"d .\""
 / End:
 ```
+
+Flymake behavior is controlled by `q-flymake-on-save`.
+When non-nil, checks run only after saving. When nil (default),
+checks run for unsaved buffers by evaluating a temporary file
+containing current buffer contents.
