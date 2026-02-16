@@ -769,7 +769,7 @@ current buffer by checking a temporary file."
                                 (concat
                                  "^'[0-9.:T]* \\(.*\\)"  ; error message
                                  "\\(?:.\\|\\\n\\)*\\\n" ; stack trace
-                                 "\\( *[[][0-9][]] *.*.[kq]:\\([0-9]+\\): \\).*\\\n" ; line number
+                                 "\\( *[[][0-9][]] *.*\\.[kq]:\\([0-9]+\\): \\).*\\\n" ; line number
                                  "\\( +^\\)$" ; carat showing column of error
                                  )
                                 nil t)
