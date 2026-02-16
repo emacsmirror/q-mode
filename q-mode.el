@@ -718,16 +718,18 @@ updates when a buffer is saved."
   (when (process-live-p q--flymake-proc)
     (kill-process q--flymake-proc))
 
-  (let ((source (current-buffer)))
+  (let ((source (current-buffer))
+        (file (buffer-file-name)))
     (save-restriction
       (widen)
       ;; reset the `q--flymake-proc' process to a new q process
       (setq
        q--flymake-proc
-       (make-process
+       (and file
+            (make-process
         :name "q-flymake" :noquery t :connection-type 'pipe
         :buffer (generate-new-buffer " *q-flymake*")
-        :command (list q-program (buffer-file-name))
+        :command (list q-program file)
         :sentinel
         (lambda (proc _event)
           ;; check that the process has exited (not just suspended)
@@ -760,8 +762,10 @@ updates when a buffer is saved."
                        finally (funcall report-fn diags)))
                   (flymake-log :warning "Canceling obsolete check %s"
                                proc))
-              (kill-buffer (process-buffer proc))))))) ; cleanup temp buffer
-      (process-send-eof q--flymake-proc))))
+              (kill-buffer (process-buffer proc)))))))) ; cleanup temp buffer
+      (if q--flymake-proc
+          (process-send-eof q--flymake-proc)
+        (funcall report-fn nil)))))
 
 ;; modes
 
