@@ -377,7 +377,7 @@ to read the command line arguments from the minibuffer."
 This marks the PROCESS with a MESSAGE, at a particular time point."
   (comint-write-input-ring)
   (let ((buffer (process-buffer process)))
-    (setq message (substring message 0 -1)) ; strip newline
+    (setq message (replace-regexp-in-string "[\r\n]+\\'" "" (or message "")))
     (setq message (format "\nProcess %s %s at %s\n"
                           (process-name process) message (current-time-string)))
     (when (buffer-live-p buffer)
