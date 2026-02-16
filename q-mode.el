@@ -272,7 +272,7 @@ Prompt with a list of live Q Shell buffers if called interactively."
   (setq q-active-buffer (get-buffer buffer)))
 
 (defun q-default-args ()
-  "Build a list of default args out of the q-init customizable variables."
+  "Build the default q command-line argument string from `q-init-*' variables."
   (concat
    (unless (equal q-init-file "") (format " %s" (shell-quote-argument q-init-file)))
    (unless (equal q-init-port 0) (format " -p %s" q-init-port))
@@ -281,7 +281,7 @@ Prompt with a list of live Q Shell buffers if called interactively."
    (unless (not q-init-garbage-collect) " -g 1")))
 
 (defun q-qcon-default-args ()
-  "Build a list of default args out of the q-init customizable variables."
+  "Build the default qcon command-line argument string from `q-qcon-*' variables."
   (concat (format "%s:%s" q-qcon-server q-qcon-port)
           (unless (equal q-qcon-user "") (format ":%s:%s" q-qcon-user q-qcon-password))))
 
