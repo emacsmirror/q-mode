@@ -42,7 +42,7 @@
 
 ;; (autoload 'q-mode "q-mode")
 
-;; The add the following to your initialization file to open all .k
+;; Then add the following to your initialization file to open all .k
 ;; and .q files with q-mode as major mode automatically:
 
 ;; (add-to-list 'auto-mode-alist '("\\.[kq]\\'" . q-mode))
@@ -65,7 +65,7 @@
 
 ;; The first q[con] session opened becomes the activated buffer.
 ;; To open a new session and send code to the new buffer, it must be
-;; actived.  Switch to the desired buffer and type `C-c M-RET' to
+;; activated.  Switch to the desired buffer and type `C-c M-RET' to
 ;; activate it.
 
 ;; Displaying tables with many columns will wrap around the buffer -
@@ -102,7 +102,7 @@
 ;; process.  This can be used to change directories before evaluating
 ;; definitions within the q process and then changing back to the root
 ;; directory.  To make the variables change values depending on which
-;; file they are sent from, values can be defined in a single line a
+;; file they are sent from, values can be defined in a single line at
 ;; the top of each .q file:
 
 ;; / -*- q-msg-prefix: "system \"d .jnp\";"; q-msg-postfix: ";system \"d .\"";-*-
@@ -490,7 +490,7 @@ This marks the PROCESS with a MESSAGE, at a particular time point."
   (condition-case nil
       (save-excursion
         (goto-char (line-end-position))          ; go to end of line
-        (let ((start (re-search-backward (concat "^" q-function-regex))) ; find beinning of function
+        (let ((start (re-search-backward (concat "^" q-function-regex))) ; find beginning of function
               (end   (re-search-forward ":")) ; find end of function name
               (fun   (thing-at-point 'sexp))) ; find function body
           (unless fun
