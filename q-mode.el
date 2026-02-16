@@ -310,7 +310,7 @@ command to read the command line arguments from the minibuffer."
          (qs (not (equal host "")))
          (port (if (with-temp-buffer (setq case-fold-search nil)(string-match "-p *\\([0-9]+\\)" args)) (match-string 1 args) ""))
          (buffer (get-buffer-create (format "*%s*" (q-shell-name host port))))
-         (command (if qs "ssh" (getenv "SHELL")))
+         (command (if qs "ssh" (or shell-file-name (getenv "SHELL") "/bin/sh")))
          (switches (append (if qs (list "-t" host) (list "-c")) (list cmd)))
          ;; disable kdb-x rlwrap functionality
          (process-environment (cons "KX_LINE=0" process-environment))
