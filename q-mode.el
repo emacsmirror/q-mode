@@ -245,7 +245,8 @@ each level is indented by this amount."
 (defun q-shell-buffer-p (buffer)
   "Return non-nil if BUFFER is a live Q shell buffer.
 BUFFER can be a buffer object, buffer name, or cons cell from completion."
-  (let ((buf (get-buffer (if (consp buffer) (car buffer) buffer))))
+  (let* ((target (if (consp buffer) (car buffer) buffer))
+         (buf (and target (get-buffer target))))
     (and buf
          (buffer-live-p buf)
          (comint-check-proc buf)
@@ -394,9 +395,13 @@ This marks the PROCESS with a MESSAGE, at a particular time point."
 
 (defun q-send-string (string)
   "Send STRING to the inferior q process stored in `q-active-buffer'."
-  (unless (cdr (assoc 'comint-process-echoes (buffer-local-variables q-active-buffer)))
-    (let ((msg (concat q-msg-prefix string q-msg-postfix)))
-      (with-current-buffer q-active-buffer
+  (unless (stringp string)
+    (user-error "Nothing to send"))
+  (unless (q-shell-buffer-p q-active-buffer)
+    (user-error "No active q buffer; run `M-x q` or activate a q shell with `C-c M-RET`"))
+  (let ((msg (concat q-msg-prefix string q-msg-postfix)))
+    (with-current-buffer q-active-buffer
+      (unless comint-process-echoes
         (goto-char (point-max))
         (insert-before-markers (concat msg "\n")))
       (comint-simple-send (get-buffer-process q-active-buffer) msg)))
@@ -423,6 +428,8 @@ This marks the PROCESS with a MESSAGE, at a particular time point."
   "Evaluate current symbol."
   (interactive)
   (let ((symbol (thing-at-point 'symbol)))
+    (unless symbol
+      (user-error "No symbol at point"))
     (q-send-string symbol)))
 
 (defun q-eval-buffer ()
@@ -500,8 +507,10 @@ This marks the PROCESS with a MESSAGE, at a particular time point."
 (defun q-load-file()
   "Load current buffer's file into the inferior q[con] process after saving."
   (interactive)
+  (unless buffer-file-name
+    (user-error "Current buffer is not visiting a file"))
   (save-buffer)
-  (q-send-string (format "\\l %s" (buffer-file-name))))
+  (q-send-string (format "\\l %s" (shell-quote-argument buffer-file-name))))
 
 ;; keymaps
 
