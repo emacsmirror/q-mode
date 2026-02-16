@@ -493,6 +493,8 @@ This marks the PROCESS with a MESSAGE, at a particular time point."
         (let ((start (re-search-backward (concat "^" q-function-regex))) ; find beinning of function
               (end   (re-search-forward ":")) ; find end of function name
               (fun   (thing-at-point 'sexp))) ; find function body
+          (unless fun
+            (user-error "Could not parse function body"))
           (q-send-string (q-strip (concat (buffer-substring start end) fun)))))
     (search-failed
      (user-error "No function found around point"))))
