@@ -479,12 +479,15 @@ This marks the PROCESS with a MESSAGE, at a particular time point."
 (defun q-eval-function ()
   "Send the current function to the inferior q[con] process."
   (interactive)
-  (save-excursion
-    (goto-char (line-end-position))          ; go to end of line
-    (let ((start (re-search-backward (concat "^" q-function-regex))) ; find beinning of function
-          (end   (re-search-forward ":")) ; find end of function name
-          (fun   (thing-at-point 'sexp))) ; find function body
-      (q-send-string (q-strip (concat (buffer-substring start end) fun))))))
+  (condition-case nil
+      (save-excursion
+        (goto-char (line-end-position))          ; go to end of line
+        (let ((start (re-search-backward (concat "^" q-function-regex))) ; find beinning of function
+              (end   (re-search-forward ":")) ; find end of function name
+              (fun   (thing-at-point 'sexp))) ; find function body
+          (q-send-string (q-strip (concat (buffer-substring start end) fun)))))
+    (search-failed
+     (user-error "No function found around point"))))
 
 (defun q-and-go (fun)
   "Call FUN interactively and show active q buffer."
