@@ -515,7 +515,7 @@ This marks the PROCESS with a MESSAGE, at a particular time point."
   (interactive)
   (q-and-go 'q-eval-region))
 
-(defun q-load-file()
+(defun q-load-file ()
   "Load current buffer's file into the inferior q[con] process after saving."
   (interactive)
   (unless buffer-file-name
