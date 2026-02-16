@@ -233,7 +233,6 @@ buffer contents to a temporary file before invoking q."
 
 (defcustom q-qcon-password ""
   "Password for remote q server."
-  :safe 'stringp
   :type 'string
   :group 'q-qcon)
 
